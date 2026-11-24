@@ -2,13 +2,14 @@ import tkinter as tk
 from tkinter import messagebox
 from class_JT import Trip_JT
 from trip_JT import JT_load_trips, JT_add_trip, JT_remove_trip, JT_today, JT_check_date
+from trip_JT import JT_count_routes, JT_count_months
 
 
 class App_JT:
     def __init__(self, root):
         self.root = root
         self.root.title("Vonatút-napló JT")
-        self.root.geometry("380x500")
+        self.root.geometry("380x580")
 
         self.trips = JT_load_trips()
 
@@ -27,6 +28,7 @@ class App_JT:
 
         tk.Button(root, text="Hozzáadás", command=self.add_trip).pack(pady=(10, 5))
         tk.Button(root, text="Törlés", command=self.remove_trip).pack(pady=5)
+        tk.Button(root, text="Statisztika", command=self.show_statistics).pack(pady=5)
 
         self.listbox = tk.Listbox(root)
         self.listbox.pack(fill="both", expand=True, padx=10, pady=10)
@@ -74,3 +76,33 @@ class App_JT:
         trip = self.trips[selected[0]]
         self.trips = JT_remove_trip(trip, self.trips)
         self.refresh_list()
+
+    def show_statistics(self):
+        if not self.trips:
+            messagebox.showinfo("Statisztika", "Még nincs egy út sem a listában.")
+            return
+
+        routes = JT_count_routes(self.trips)
+        months = JT_count_months(self.trips)
+        best_route = max(routes, key=routes.get)
+
+        window = tk.Toplevel(self.root)
+        window.title("Statisztika JT")
+        window.geometry("440x360")
+
+        tk.Label(window, text=f"Összes út: {len(self.trips)}").pack(pady=(10, 0))
+        tk.Label(window, text=f"Leggyakoribb útvonal: {best_route} ({routes[best_route]}x)").pack(pady=5)
+        tk.Label(window, text="Utak havonta:").pack()
+
+        canvas = tk.Canvas(window, width=360, height=230, bg="white")
+        canvas.pack(pady=10)
+
+        biggest = max(months.values())
+        bar_width = min(80, 320 // len(months))
+        x = 20
+        for month, count in months.items():
+            height = count * 150 // biggest
+            canvas.create_rectangle(x, 190 - height, x + bar_width - 10, 190, fill="steelblue")
+            canvas.create_text(x + (bar_width - 10) // 2, 180 - height, text=str(count))
+            canvas.create_text(x + (bar_width - 10) // 2, 205, text=month, font=("Arial", 8))
+            x += bar_width
