@@ -29,7 +29,9 @@ def JT_load_trips():
         trips = [
             Trip_JT("Budapest-Keleti", "Szombathely", "2026-09-05"),
             Trip_JT("Szombathely", "Budapest-Keleti", "2026-09-07"),
-            Trip_JT("Budapest-Keleti", "Dunaújváros", "2026-09-12")
+            Trip_JT("Budapest-Keleti", "Dunaújváros", "2026-09-12"),
+            Trip_JT("Budapest-Keleti", "Szombathely", "2026-10-10"),
+            Trip_JT("Budapest-Keleti", "Szombathely", "2026-11-07")
         ]
         JT_save_trips(trips)
     return trips
@@ -52,3 +54,19 @@ def JT_remove_trip(trip, trips):
         trips.remove(trip)
         JT_save_trips(trips)
     return trips
+
+
+def JT_count_routes(trips):
+    routes = {}
+    for trip in trips:
+        route = f"{trip.start} -> {trip.end}"
+        routes[route] = routes.get(route, 0) + 1
+    return routes
+
+
+def JT_count_months(trips):
+    months = {}
+    for trip in trips:
+        month = datetime.strptime(trip.date, "%Y-%m-%d").strftime("%Y-%m")
+        months[month] = months.get(month, 0) + 1
+    return dict(sorted(months.items()))
