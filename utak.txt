@@ -1,3 +1,5 @@
 Budapest-Keleti;Szombathely;2026-09-05
 Szombathely;Budapest-Keleti;2026-09-07
 Budapest-Keleti;Dunaújváros;2026-09-12
+Budapest-Keleti;Szombathely;2026-10-10
+Budapest-Keleti;Szombathely;2026-11-07
